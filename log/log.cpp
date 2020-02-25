@@ -7,25 +7,20 @@ INITIALIZE_EASYLOGGINGPP
 #ifdef EASYLOGGING
 
 #define MaxFileNum 10
+int mvfile(const string & srcfile,const string & targetfile){
+	return rename(srcfile.c_str(),targetfile.c_str());
+}
 void rolloutHandler(const char* filename, std::size_t size)
 {
 	/// 备份日志
 	for (auto i = 0; i < MaxFileNum; i++) {
 		auto targetfile = string(filename) +"."+ to_string(MaxFileNum - i);
 		auto srcfile = string(filename) +"."+ to_string(MaxFileNum - i - 1);
-		auto movefilecommand = string("mv ") + srcfile + " " + targetfile;
-		LOG_INFO("begin move file,command=" << movefilecommand);
-		system(movefilecommand.c_str());
-
-		ofstream testfile("/tmp/test.txt");
-		testfile << movefilecommand << endl;
+		// auto movefilecommand = string("mv ") + srcfile + " " + targetfile;
+		mvfile(srcfile,targetfile);
 	}
 	auto movefilecommand = string("mv ") + filename + " " + filename + ".0";
-	LOG_INFO("begin move file,command=" << movefilecommand);
-	system(movefilecommand.c_str());
-
-	ofstream testfile("/tmp/test.txt");
-	testfile << movefilecommand << endl;
+	mvfile(filename,string(filename)+".0");
 }
 
 void log_init(string logconf) {

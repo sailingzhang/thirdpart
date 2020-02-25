@@ -1,0 +1,153 @@
+syntax = "proto3";
+
+package Cactus;
+
+service Cactus {
+	rpc Hello(HelloReq) returns(HelloRsp);
+
+	///////////////////////stock predict////////////////////////////////////
+	rpc StockPredict1(StockPredict1Req) returns (StockPredict1Rsp);//closeprice
+	rpc FaceDetect_Mt(FaceDetectReq) returns (FaceDetectRsp);
+	rpc FaceDetectAndIdentifyByPic_MFK(FaceDetectAndIdentifyByPicReq) returns (FaceDetectAndIdentifyByPicRsp);//mtcnn,facenet,knn 
+	rpc IdentifyPersonByThumbnails(IdentifyPersonByThumbnailsReq) returns (IdentifyPersonByThumbnailsRsp);
+}
+////////////////////////////////////////////////////////////////////////////////////////
+message FaceDetect_Mt_Configure{
+	string mtcnn_modelname = 1;
+	int32 mtcnn_minifacesize = 2;
+	float mtcnn_factor = 3;
+	float mtcnn_pnet_threshold = 4;
+	float mtcnn_rnet_threshold = 5;
+	float mtcnn_onet_threshold = 6;	
+	int32 faceDetect_filter_minifacearea = 7;
+}
+
+
+message FaceDetectAndIdentifyByPic_MFK_Configure {
+	// MtcnnConfigure mtcnnconfigure = 1;
+	string mtcnn_modelname = 1;
+	int32 mtcnn_minifacesize = 2;
+	float mtcnn_factor = 3;
+	float mtcnn_pnet_threshold = 4;
+	float mtcnn_rnet_threshold = 5;
+	float mtcnn_onet_threshold = 6;
+	int32 faceDetect_filter_minifacearea = 7;	
+
+	string facenet_modelname = 8;
+	float facenet_distance = 9;
+	string train_directory = 10;
+	string identify_directory = 11;
+	bool  is_auto_classify = 12;
+	int32  maxnumface_auto_classfiy = 13;
+
+}
+
+message FaceNetConfigure{
+	string model_name = 1;
+}
+
+message CactusConfigure{
+	string ModelServer = 1;
+	
+	FaceDetect_Mt_Configure   facedetect_mt_configure = 2;
+	FaceDetectAndIdentifyByPic_MFK_Configure facedetectandidentifybypic_mfk_configure = 3;
+	string StockPredict1_ModelName = 4;
+}
+
+/////////////////////////////com///////////////////////////////////////////////////////////
+message Position{
+	int32 top = 1;
+	int32 left = 2;
+	int32 height =3;
+	int32 width = 4;
+}
+////////////////////////////////////////////////////////////////////////////////////////
+message facethumbnails{
+	string faceId = 1;
+	bytes faceThumbnail = 2;
+}
+message facePersons{
+	string faceId = 1;
+	string personId = 2;
+	bool   isNewPerson = 3;
+}
+
+message IdentifyPersonByThumbnailsReq{
+	int64 id = 1;
+	repeated  facethumbnails faces = 2;
+}
+message IdentifyPersonByThumbnailsRsp{
+	int64 id = 1;
+	repeated facePersons predictPersons = 2;
+	
+}
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+message FaceDetectReq{
+	int64 id = 1;
+	bytes picdata = 2;
+}
+message FaceDetectRsp{
+	int64 id = 1;
+	repeated Position positions = 2; 
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+message DetectAndIdentifyInfo{
+	int32 top = 1;
+	int32 left = 2;
+	int32 height =3;
+	int32 width = 4;
+	string personId = 5;
+	bool   isNewPerson = 6;
+}
+
+message FaceDetectAndIdentifyByPicReq{
+	int64 id = 1;
+	bytes picdata = 2;
+}
+
+message FaceDetectAndIdentifyByPicRsp{
+	int64 id = 1;
+	repeated DetectAndIdentifyInfo personinfos = 2;
+}
+////////////////////////////////////////////////////////////////////////////////////////
+enum STOCKOP{
+	HOLD = 0;
+	SELL = 1;
+	BUY = 2;
+	
+}
+
+message StockPredict1Req{
+	string model = 1;
+	repeated float closePrice = 2;
+	float holdPosition = 3;
+	float floatCaptionPoints = 4;
+}
+message StockPredict1Rsp{
+	STOCKOP op = 1;
+	string  error = 2;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+message HelloReq{
+	string  ask = 1;
+}
+message HelloRsp{
+	string response = 1;
+}
+
+
+
+
+// //////////////////////////////////Tensorflow Serving Http//////////////////////////////////////////////////////
+// message instances{
+
+// }
+// message TfsHttpInstancePredictReq{
+// 	string signature_name = 1;
+// 	repeated string instances
+// }
