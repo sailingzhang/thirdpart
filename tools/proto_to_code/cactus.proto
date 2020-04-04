@@ -12,6 +12,11 @@ service Cactus {
 	rpc IdentifyPersonByThumbnails(IdentifyPersonByThumbnailsReq) returns (IdentifyPersonByThumbnailsRsp);
 }
 ////////////////////////////////////////////////////////////////////////////////////////
+message StockPredict1_Configure{
+	string model_name = 1;
+	int64  model_version = 2;
+}
+
 message FaceDetect_Mt_Configure{
 	string mtcnn_modelname = 1;
 	int32 mtcnn_minifacesize = 2;
@@ -38,7 +43,9 @@ message FaceDetectAndIdentifyByPic_MFK_Configure {
 	string train_directory = 10;
 	string identify_directory = 11;
 	bool  is_auto_classify = 12;
-	int32  maxnumface_auto_classfiy = 13;
+	float auto_video_newperson_max_distance = 13;// < facenet_distance will be disabled
+	float auto_addtrain_min_distance = 14;//< 0 will be disabled
+	int32  maxnumface_auto_classfiy = 15;
 
 }
 
@@ -48,18 +55,19 @@ message FaceNetConfigure{
 
 message CactusConfigure{
 	string ModelServer = 1;
-	
-	FaceDetect_Mt_Configure   facedetect_mt_configure = 2;
-	FaceDetectAndIdentifyByPic_MFK_Configure facedetectandidentifybypic_mfk_configure = 3;
-	string StockPredict1_ModelName = 4;
+	string CactusServer = 2;
+	StockPredict1_Configure  stockpredict1_configure = 3;
+	FaceDetect_Mt_Configure   facedetect_mt_configure = 4;
+	FaceDetectAndIdentifyByPic_MFK_Configure facedetectandidentifybypic_mfk_configure = 5;
+	string StockPredict1_ModelName = 6;
 }
 
 /////////////////////////////com///////////////////////////////////////////////////////////
 message Position{
-	int32 top = 1;
-	int32 left = 2;
-	int32 height =3;
-	int32 width = 4;
+	float top = 1;
+	float left = 2;
+	float height =3;
+	float width = 4;
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 message facethumbnails{
@@ -95,10 +103,10 @@ message FaceDetectRsp{
 
 ////////////////////////////////////////////////////////////////////////////////////////
 message DetectAndIdentifyInfo{
-	int32 top = 1;
-	int32 left = 2;
-	int32 height =3;
-	int32 width = 4;
+	float top = 1;
+	float left = 2;
+	float height =3;
+	float width = 4;
 	string personId = 5;
 	bool   isNewPerson = 6;
 }
