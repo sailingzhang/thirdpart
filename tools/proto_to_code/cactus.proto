@@ -9,6 +9,7 @@ service Cactus {
 	rpc StockPredict1(StockPredict1Req) returns (StockPredict1Rsp);//closeprice
 	rpc FaceDetect_Mt(FaceDetectReq) returns (FaceDetectRsp);
 	rpc FaceDetectAndIdentifyByPic_MFK(FaceDetectAndIdentifyByPicReq) returns (FaceDetectAndIdentifyByPicRsp);//mtcnn,facenet,knn 
+	rpc FaceDetectAndIdentifyByPic_MFS(FaceDetectAndIdentifyByPicReq) returns (FaceDetectAndIdentifyByPicRsp);//mtcnn,facenet,similar
 	rpc IdentifyPersonByThumbnails(IdentifyPersonByThumbnailsReq) returns (IdentifyPersonByThumbnailsRsp);
 }
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -49,6 +50,16 @@ message FaceDetectAndIdentifyByPic_MFK_Configure {
 
 }
 
+
+message FaceDetectAndIdentifyByPic_MFS_Configure {
+	//use the MFK detect
+	//use the MFK facenet emb;
+	string train_directory = 1;
+	string identify_directory = 2;
+	bool  is_auto_classify = 3;
+	int32  maxnumface_auto_classfiy = 4;
+}
+
 message FaceNetConfigure{
 	string model_name = 1;
 }
@@ -59,7 +70,8 @@ message CactusConfigure{
 	StockPredict1_Configure  stockpredict1_configure = 3;
 	FaceDetect_Mt_Configure   facedetect_mt_configure = 4;
 	FaceDetectAndIdentifyByPic_MFK_Configure facedetectandidentifybypic_mfk_configure = 5;
-	string StockPredict1_ModelName = 6;
+	FaceDetectAndIdentifyByPic_MFS_Configure  facedetectandidentifybypic_mfs_configure =6;
+	string StockPredict1_ModelName = 7;
 }
 
 /////////////////////////////com///////////////////////////////////////////////////////////
