@@ -64,6 +64,9 @@ message FaceNetConfigure{
 	string model_name = 1;
 }
 
+// message GroupInfo{
+// 	string groupname = 1;
+// }
 message CactusConfigure{
 	string ModelServer = 1;
 	string CactusServer = 2;
@@ -71,7 +74,8 @@ message CactusConfigure{
 	FaceDetect_Mt_Configure   facedetect_mt_configure = 4;
 	FaceDetectAndIdentifyByPic_MFK_Configure facedetectandidentifybypic_mfk_configure = 5;
 	FaceDetectAndIdentifyByPic_MFS_Configure  facedetectandidentifybypic_mfs_configure =6;
-	string StockPredict1_ModelName = 7;
+	map<string,string>  permanent_groupid_map = 7;
+	string StockPredict1_ModelName = 8;
 }
 
 /////////////////////////////com///////////////////////////////////////////////////////////
@@ -125,12 +129,14 @@ message DetectAndIdentifyInfo{
 
 message FaceDetectAndIdentifyByPicReq{
 	int64 id = 1;
-	bytes picdata = 2;
+	string groupid = 2;
+	bytes picdata = 3;
 }
 
 message FaceDetectAndIdentifyByPicRsp{
 	int64 id = 1;
-	repeated DetectAndIdentifyInfo personinfos = 2;
+	string groupid = 2;
+	repeated DetectAndIdentifyInfo personinfos = 3;
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 enum STOCKOP{

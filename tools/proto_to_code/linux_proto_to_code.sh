@@ -1,4 +1,4 @@
-rm *.h *.c *.js *.ts
+rm *.h *.cc *.js *.ts *.py *.go
 bindir="../../grpc1.27.1/bin"
 ${bindir}/protoc  --grpc_out=. --plugin=protoc-gen-grpc=${bindir}/grpc_cpp_plugin  *.proto
 ${bindir}/protoc  --cpp_out=. *.proto
