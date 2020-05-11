@@ -14,6 +14,7 @@
 class ThreadPool {
 public:
     ThreadPool(size_t);
+    std::size_t TaskSize();
     template<class F, class... Args>
     auto enqueue(F&& f, Args&&... args) 
         -> std::future<typename std::result_of<F(Args...)>::type>;
@@ -58,6 +59,11 @@ inline ThreadPool::ThreadPool(size_t threads)
         );
 }
 
+
+inline std::size_t ThreadPool::TaskSize(){
+    std::unique_lock<std::mutex> lock(queue_mutex);
+    return this->tasks.size();
+}
 // add new work item to the pool
 template<class F, class... Args>
 auto ThreadPool::enqueue(F&& f, Args&&... args) 
