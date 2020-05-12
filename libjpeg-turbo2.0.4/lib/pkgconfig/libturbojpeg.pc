@@ -1,0 +1,10 @@
+prefix=/home/sailingzhang/develop/othergit/build/libjpeg/install
+exec_prefix=/home/sailingzhang/develop/othergit/build/libjpeg/install
+libdir=/home/sailingzhang/develop/othergit/build/libjpeg/install/lib
+includedir=/home/sailingzhang/develop/othergit/build/libjpeg/install/include
+
+Name: libturbojpeg
+Description: A SIMD-accelerated JPEG codec that provides the TurboJPEG API
+Version: 2.0.4
+Libs: -L${libdir} -lturbojpeg
+Cflags: -I${includedir}

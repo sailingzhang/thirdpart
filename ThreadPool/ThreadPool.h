@@ -11,17 +11,22 @@
 #include <functional>
 #include <stdexcept>
 
+
+
 class ThreadPool {
 public:
-    ThreadPool(size_t);
+    ThreadPool(size_t,string);
     std::size_t TaskSize();
+    std::vector<thread::id>GetThreadIds();
     template<class F, class... Args>
     auto enqueue(F&& f, Args&&... args) 
         -> std::future<typename std::result_of<F(Args...)>::type>;
     ~ThreadPool();
 private:
     // need to keep track of threads so we can join them
+    void threadfun(string poolname,int32_t index);
     std::vector< std::thread > workers;
+    std::vector<thread::id> _threadidsVec;
     // the task queue
     std::queue< std::function<void()> > tasks;
     
@@ -32,37 +37,70 @@ private:
 };
  
 // the constructor just launches some amount of workers
-inline ThreadPool::ThreadPool(size_t threads)
+inline ThreadPool::ThreadPool(size_t threads,string poolname)
     :   stop(false)
 {
-    for(size_t i = 0;i<threads;++i)
-        workers.emplace_back(
-            [this]
-            {
-                for(;;)
-                {
-                    std::function<void()> task;
+    // for(size_t i = 0;i<threads;++i)
+    //     workers.emplace_back(
+    //         [this,poolname,i]
+    //         {
+    //             auto threadname = poolname +"_"+to_string(i);
+    //             pthread_setname_np(pthread_self(), threadname.c_str());
+    //             for(;;)
+    //             {
+    //                 std::function<void()> task;
 
-                    {
-                        std::unique_lock<std::mutex> lock(this->queue_mutex);
-                        this->condition.wait(lock,
-                            [this]{ return this->stop || !this->tasks.empty(); });
-                        if(this->stop && this->tasks.empty())
-                            return;
-                        task = std::move(this->tasks.front());
-                        this->tasks.pop();
-                    }
+    //                 {
+    //                     std::unique_lock<std::mutex> lock(this->queue_mutex);
+    //                     this->condition.wait(lock,
+    //                         [this]{ return this->stop || !this->tasks.empty(); });
+    //                     if(this->stop && this->tasks.empty())
+    //                         return;
+    //                     task = std::move(this->tasks.front());
+    //                     this->tasks.pop();
+    //                 }
 
-                    task();
-                }
-            }
-        );
+    //                 task();
+    //             }
+    //         }
+    //     );
+
+
+    for(auto i = 0; i< threads;i++){
+        std::thread f(&ThreadPool::threadfun,this,poolname,i);
+        this->_threadidsVec.push_back(f.get_id());
+        this->workers.push_back(std::move(f));
+    }
 }
 
+
+inline void ThreadPool::threadfun(string poolname,int32_t index){
+    auto threadname = poolname +"_"+to_string(index);
+    pthread_setname_np(pthread_self(), threadname.c_str());
+    for(;;)
+    {
+        std::function<void()> task;
+        {
+            std::unique_lock<std::mutex> lock(this->queue_mutex);
+            this->condition.wait(lock,
+                [this]{ return this->stop || !this->tasks.empty(); });
+            if(this->stop && this->tasks.empty())
+                return;
+            task = std::move(this->tasks.front());
+            this->tasks.pop();
+        }
+        task();
+    }    
+    return;
+}
 
 inline std::size_t ThreadPool::TaskSize(){
     std::unique_lock<std::mutex> lock(queue_mutex);
     return this->tasks.size();
+}
+
+inline std::vector<thread::id> ThreadPool::GetThreadIds(){
+    return this->_threadidsVec;
 }
 // add new work item to the pool
 template<class F, class... Args>
