@@ -17,10 +17,12 @@ double funcTime(F func, Args&&... args){
 }
 
 template<class F, class... Args>
-auto FuncTime(F&& func, Args&&... args)->typename std::result_of<F(Args...)>::type{
+auto CalFunCostTime(F func, Args&&... args)->typename std::result_of<F(Args...)>::type{
     TimeVar t1=timeNow();
     auto ret = func(std::forward<Args>(args)...);
-    std::tuple<>(duration(timeNow()-t1),ret);
+    // std::tuple<>(duration(timeNow()-t1),ret);
+    // return {duration(timeNow()-t1,ret}
+    return ret;
 }
 
 
