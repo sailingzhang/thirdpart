@@ -17,6 +17,7 @@ class ThreadPool {
 public:
     ThreadPool(size_t,string);
     std::size_t TaskSize();
+    void ClearTask();
     std::vector<thread::id>GetThreadIds();
     template<class F, class... Args>
     auto enqueue(F&& f, Args&&... args) 
@@ -97,6 +98,14 @@ inline void ThreadPool::threadfun(string poolname,int32_t index){
 inline std::size_t ThreadPool::TaskSize(){
     std::unique_lock<std::mutex> lock(queue_mutex);
     return this->tasks.size();
+}
+
+inline void ThreadPool::ClearTask(){
+    std::unique_lock<std::mutex> lock(queue_mutex);
+    while (0 != this->tasks.size()){
+        this->tasks.pop();
+    }
+    
 }
 
 inline std::vector<thread::id> ThreadPool::GetThreadIds(){
