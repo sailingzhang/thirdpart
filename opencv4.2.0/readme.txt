@@ -1,1 +1,0 @@
- cmake .. -D CMAKE_BUILD_TYPE=RELEASE       -D CMAKE_INSTALL_PREFIX=~/opencv_install       -D BUILD_SHARED_LIBS=NO       -D BUILD_PNG=ON       -D BUILD_JASPER=ON       -D BUILD_JPEG=ON       -D BUILD_TIFF=ON       -D BUILD_ZLIB=ON       -D WITH_JPEG=ON       -D WITH_PNG=ON       -D WITH_JASPER=ON       -D WITH_TIFF=ON 
