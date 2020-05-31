@@ -1,0 +1,1 @@
+https://docs.openvinotoolkit.org/latest/_models_intel_person_detection_action_recognition_0006_description_person_detection_action_recognition_0006.html
