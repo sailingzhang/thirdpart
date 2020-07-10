@@ -1,4 +1,5 @@
 import os
+import sys
 import tensorflow.compat.v1 as tf
 from tensorflow.python.framework import graph_util
 # import tensorflow as tf
@@ -53,11 +54,11 @@ def view_graph_bydir(pathdir):
         graph = tf.get_default_graph()
         [print(n.name) for n in tf.get_default_graph().as_graph_def().node]
 
-def convertosimplemodel(pathdir):
+def convertosimplemodel(pathdir,outsimplepath):
     with tf.Session(graph=tf.Graph()) as sess:
         tf.saved_model.loader.load(sess, ["serve"], pathdir)
         logging.info("begin save simple model")
-        save_as_pb(sess,['detections'],"/tmp/pig_simple_savemodel.pb")
+        save_as_pb(sess,['detections'],outsimplepath)
 
 def save_as_pb(sess,output_node_names,pbfile):
     if os.path.exists(pbfile):
@@ -79,7 +80,10 @@ if __name__ == "__main__":
     # view_effiect_bykaras()
     # view_effiect_tf1()
     # pbpath="/home/sailingzhang/winshare/develop/source/TONGWEI_SVN2/gentoo/trunk/products/cognition/facerecognition/embed_model/20180402-114759.pb"
-    pbpath="/home/sailingzhang/tmp/myraccoon_savemodel/saved_model.pb"
+    # pbpath="/home/sailingzhang/tmp/myraccoon_savemodel/saved_model.pb"
+    pbpath = sys.argv[1]
+    pbsimplepath= sys.argv[2]
+
     # view_graph_tf2(pbpath)
-    convertosimplemodel("/mnt/d/develop/develop_data/pig_save_model")
+    convertosimplemodel(pbpath,pbsimplepath)
     logging.info("exit")
