@@ -5,8 +5,7 @@
 #include <thread>
 using namespace std;
 using namespace std::chrono;
-using namespace tvu_bridge;
-extern InitRecogParams_t gInitParms;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 INITIALIZE_EASYLOGGINGPP
 #ifdef EASYLOGGING
